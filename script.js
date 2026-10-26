@@ -18,17 +18,30 @@
     try { localStorage.setItem('deepankar-portfolio-theme', isLight ? 'light' : 'dark'); } catch (_) { /* Ignore storage restrictions. */ }
   });
 
-  mobileMenu.addEventListener('click', () => {
-    const isOpen = navigation.classList.toggle('open');
+  const setMenuOpen = (isOpen) => {
+    navigation.classList.toggle('open', isOpen);
     mobileMenu.setAttribute('aria-expanded', String(isOpen));
+  };
+
+  mobileMenu.addEventListener('click', () => {
+    setMenuOpen(mobileMenu.getAttribute('aria-expanded') !== 'true');
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMenuOpen(false);
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!navigation.contains(event.target) && !mobileMenu.contains(event.target)) {
+      setMenuOpen(false);
+    }
   });
 
   navLinks.forEach((link) => {
     link.addEventListener('click', () => {
       navLinks.forEach((candidate) => candidate.classList.remove('active'));
       link.classList.add('active');
-      navigation.classList.remove('open');
-      mobileMenu.setAttribute('aria-expanded', 'false');
+      setMenuOpen(false);
     });
   });
 
